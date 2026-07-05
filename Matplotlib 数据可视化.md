@@ -4,7 +4,7 @@
 
 - 2026-07-05：完成 matplotlib 数据可视化入门，已掌握基础绘图流程。
 - 当前已会：`plt.subplots()` 建图、`plot()`/`scatter()`/`hist()` 基本用法、坐标轴标签与标题、`legend()`、线条样式、注释 `annotate()`、基础坐标范围设置。
-- 下一步：补一个小练习，把同一份数据分别画成折线图、散点图和直方图，顺手练一遍样式与标注。
+
 
 ## 1.头文件
 ```python
@@ -31,6 +31,7 @@ fig,(ax1,ax2) = plt.subplots(1,2,figsize = (10,4),layout = 'constrained')
 
 # fig,ax = plt.subplots(figsize = (5,2.7),layout = 'constrained')
 
+# s是反映每个点大小的参数
 ax1.scatter('a','b',c='c',s='d',data=data)
 
 ax1.set_xlabel('entry a')
@@ -273,7 +274,7 @@ plt.show()
 
 ```python
 import matplotlib.pyplot as plt
-import numpy as np
+	import numpy as np
 
 # 创建一张8×8的模拟灰度图片，每个元素代表一个像素值
 image = np.arange(64).reshape(8,8)
@@ -344,3 +345,45 @@ plt.show()
 * `digits.target`保存每张图片对应的数字标签
 * `ravel`表示展平，这里把2×5的`axs`变成长度为10的一维序列
 * `savefig`保存整个Figure，`dpi`是 dots per inch，表示每英寸像素点数量
+
+## 11. 手写数字识别练习
+
+```python
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import load_digits
+
+  
+
+digits = load_digits()
+
+images = digits.images[:6] # 8*8
+
+labels = digits.target[:6] # 正确对应的数字
+
+  
+
+fig,axs = plt.subplots(2,3,figsize = (10,4), layout = 'constrained')
+
+i = 0
+
+for ax in axs.ravel(): # ravel 将二维数组展开为一维Numpy数组
+
+        im = ax.imshow(images[i], cmap='gray', vmin=0, vmax=16, interpolation='nearest')
+
+        ax.set_title(f"Label: {labels[i]}")
+
+        i = i + 1
+
+  
+
+fig.colorbar(im,ax=axs.ravel().tolist()) # 转成一维列表
+
+fig.suptitle('Handwritten Digits') # 给画布添加总标题
+
+ax.axis('off')
+
+fig.savefig("digits_preview.png", dpi=150) # 保存图片
+
+plt.show()
+```
