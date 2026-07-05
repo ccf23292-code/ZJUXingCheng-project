@@ -374,6 +374,8 @@ for ax in axs.ravel(): # ravel 将二维数组展开为一维Numpy数组
         ax.set_title(f"Label: {labels[i]}")
 
         i = i + 1
+        
+		ax.axis('off')
 
   
 
@@ -381,7 +383,6 @@ fig.colorbar(im,ax=axs.ravel().tolist()) # 转成一维列表
 
 fig.suptitle('Handwritten Digits') # 给画布添加总标题
 
-ax.axis('off')
 
 fig.savefig("digits_preview.png", dpi=150) # 保存图片
 
