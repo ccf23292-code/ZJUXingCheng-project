@@ -263,3 +263,84 @@ ax2.legend([l1,l2], ['Cosine(Left)','Straight(Right)'])
 plt.show()
 ```
 
+## 10.imshow()显示二维图像
+
+***imshow是 image show 的缩写，把二维数组中的每个数值显示成一个像素，CNN中常用来查看输入图片和特征图***
+
+* 二维数组 `(height, width)` 会显示为灰度图或伪彩色图
+* 三维数组 `(height, width, 3)` 会按照 RGB 彩色图显示
+* `cmap` 是 color map 的缩写，只对二维数值图像起作用
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 创建一张8×8的模拟灰度图片，每个元素代表一个像素值
+image = np.arange(64).reshape(8,8)
+
+fig, ax = plt.subplots(figsize = (5,2.7), layout = 'constrained')
+
+# imshow返回AxesImage对象，cmap='gray'表示使用灰度颜色
+im = ax.imshow(image,cmap = 'gray',interpolation = 'nearest')
+
+ax.set_title('8×8 Image')
+ax.axis('off') # 关闭坐标轴刻度，观察图片时通常不需要显示坐标
+
+# colorbar显示像素数值和颜色之间的对应关系
+fig.colorbar(im,ax = ax)
+
+plt.show()
+```
+
+### 常用参数
+
+```python
+ax.imshow(
+	image,
+	cmap = 'gray',          # 灰度颜色，数值越大通常越亮
+	vmin = 0,               # 颜色映射的最小值
+	vmax = 63,              # 颜色映射的最大值
+	interpolation = 'nearest' # 不平滑像素，保留原始格子
+)
+```
+
+* 比`vmin`小的都用最低颜色，比`vamx`大的都用最高颜色
+* `interpolation`是插值方式，`nearest`表示使用最近邻，不对像素进行平滑
+	* `origin`默认是`upper`，即数组第0行显示在图片最上方
+
+### imshow返回的对象
+
+```python
+im = ax.imshow(image,cmap = 'gray')
+im.set_cmap('plasma') # 修改整张图像的颜色映射
+im.set_clim(0,63) # 修改颜色显示范围，相当于设置vmin和vmax
+im.set_data(new_image) # 替换整张图像的数据
+```
+
+**`im`是一个AxesImage对象，代表整张图像，类似于`plot()`返回的Line2D对象代表整条曲线**
+
+### CNN中同时显示多张样本
+
+```python
+from sklearn.datasets import load_digits
+import matplotlib.pyplot as plt
+
+digits = load_digits()
+
+# 创建2行5列，共10个Axes
+fig, axs = plt.subplots(2,5,figsize = (10,4),layout = 'constrained')
+
+# axs.ravel()把2×5的Axes数组展开，方便和图片、标签一起遍历
+for ax,image,label in zip(axs.ravel(),digits.images[:10],digits.target[:10]):
+	ax.imshow(image,cmap = 'gray',interpolation = 'nearest')
+	ax.set_title(f'Label: {label}')
+	ax.axis('off')
+
+fig.savefig('digits_samples.png',dpi = 150) # 在show之前保存图片
+plt.show()
+```
+
+* `digits.images`的形状是`(样本数,8,8)`，每个样本是一张8×8灰度图片
+* `digits.target`保存每张图片对应的数字标签
+* `ravel`表示展平，这里把2×5的`axs`变成长度为10的一维序列
+* `savefig`保存整个Figure，`dpi`是 dots per inch，表示每英寸像素点数量
